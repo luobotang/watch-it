@@ -1,0 +1,26 @@
+{
+  "name": "watch-it",
+  "version": "0.1.0",
+  "description": "watch reactive data",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "node test/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/luobotang/watch-it.git"
+  },
+  "keywords": [
+    "vue",
+    "reactive"
+  ],
+  "author": "luobotang",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/luobotang/watch-it/issues"
+  },
+  "homepage": "https://github.com/luobotang/watch-it#readme"
+}
