@@ -17,10 +17,10 @@ function queueWatcher(watcher) {
 }
 
 function flushSchedulerQueue() {
-  flushing = true
-
-  for (i = 0; i < queue.length; i++) {
-    watcher = queue[i]
+  for (let i = 0; i < queue.length; i++) {
+    let watcher = queue[i]
     watcher.run()
   }
+  waiting = false
+  queue.length = 0
 }
