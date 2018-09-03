@@ -1,5 +1,5 @@
 {
-  "name": "watch-it",
+  "name": "@luobotang/watch-it",
   "version": "0.1.0",
   "description": "watch reactive data",
   "main": "index.js",
