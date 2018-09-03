@@ -3,11 +3,8 @@
   "version": "0.1.0",
   "description": "watch reactive data",
   "main": "index.js",
-  "directories": {
-    "test": "test"
-  },
   "scripts": {
-    "test": "node test/",
+    "test": "mocha",
     "build": "node build"
   },
   "repository": {
@@ -25,6 +22,7 @@
   },
   "homepage": "https://github.com/luobotang/watch-it#readme",
   "devDependencies": {
+    "mocha": "^5.2.0",
     "rollup": "^0.65.0",
     "rollup-plugin-commonjs": "^9.1.6"
   }

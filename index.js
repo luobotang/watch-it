@@ -1,5 +1,8 @@
+const defineReactive = require('./src/defineReactive')
 const Observer = require('./src/observer')
 const Watcher = require('./src/watcher')
+
+exports.defineReactive = defineReactive
 
 exports.observe = Observer.observe
 
