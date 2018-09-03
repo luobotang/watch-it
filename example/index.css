@@ -1,0 +1,26 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+
+form {
+  margin: 10px;
+  padding: 20px;
+  border: 1px solid #eee;
+}
+
+.form-row {
+  display: flex;
+  margin-bottom: 10px;
+}
+.form-row button {
+  margin-left: 10px;
+  padding: 0 5px;
+}
+.form-row input {
+  flex: 1;
+  margin-left: 10px;
+}
+.message {
+  padding: 20px 30px;
+}

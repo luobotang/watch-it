@@ -72,41 +72,6 @@ var WatchIt = (function (exports) {
     });
   };
 
-  class Observer {
-    constructor(value) {
-      this.value = value;
-      this.dep = new dep();
-      Object.defineProperty(value, '__ob__', {
-        value: this,
-        enumerable: false,
-        writable: true,
-        configurable: true
-      });
-      this.walk(value);
-    }
-
-    walk(obj) {
-      Object.keys(obj).forEach((key) => {
-        defineReactive(obj, key, obj[key]);
-      });
-    }
-  }
-
-  Observer.observe = function(value) {
-    if (!value || typeof value !== 'object') {
-      return
-    }
-    let ob;
-    if (value.hasOwnProperty( '__ob__') && value.__ob__ instanceof Observer) {
-      ob = value.__ob__;
-    } else {
-      ob = new Observer(value);
-    }
-    return ob
-  };
-
-  var observer = Observer;
-
   const callbacks = [];
   let pending = false;
 
@@ -271,19 +236,119 @@ var WatchIt = (function (exports) {
     }
   };
 
+  const noop = () => {};
+  const computedWatcherOptions = { lazy: true };
+  const sharedPropertyDefinition = {
+    enumerable: true,
+    configurable: true,
+    get: noop,
+    set: noop
+  };
+
+  var defineComputed_1 = function (target, key, userDef) {
+    let watchers;
+    if (!target.hasOwnProperty('__computed_watchers__')) {
+      watchers = Object.create(null);
+      Object.defineProperty(target, '__computed_watchers__', {
+        value: watchers,
+        enumerable: false,
+        writable: true,
+        configurable: true
+      });
+    } else {
+      watchers = target.__computed_watchers__;
+    }
+    const getter = typeof userDef === 'function' ? userDef : userDef.get;
+    watchers[key] = new watcher(
+      getter || noop,
+      noop,
+      computedWatcherOptions
+    );
+    defineComputed(target, key, userDef);
+  };
+
+  function defineComputed (target, key, userDef) {
+    if (typeof userDef === 'function') {
+      sharedPropertyDefinition.get = createComputedGetter(key);
+      sharedPropertyDefinition.set = noop;
+    } else {
+      sharedPropertyDefinition.get = userDef.get ? createComputedGetter(key) : noop;
+      sharedPropertyDefinition.set = userDef.set || noop;
+    }
+    Object.defineProperty(target, key, sharedPropertyDefinition);
+  }
+
+  function createComputedGetter (key) {
+    return function computedGetter () {
+      const watcher$$1 = this.__computed_watchers__ && this.__computed_watchers__[key];
+      if (watcher$$1) {
+        if (watcher$$1.dirty) {
+          watcher$$1.evaluate();
+        }
+        if (dep.target) {
+          watcher$$1.depend();
+        }
+        return watcher$$1.value
+      }
+    }
+  }
+
+  class Observer {
+    constructor(value) {
+      this.value = value;
+      this.dep = new dep();
+      Object.defineProperty(value, '__ob__', {
+        value: this,
+        enumerable: false,
+        writable: true,
+        configurable: true
+      });
+      this.walk(value);
+    }
+
+    walk(obj) {
+      Object.keys(obj).forEach((key) => {
+        defineReactive(obj, key, obj[key]);
+      });
+    }
+  }
+
+  Observer.observe = function(value) {
+    if (!value || typeof value !== 'object') {
+      return
+    }
+    let ob;
+    if (value.hasOwnProperty( '__ob__') && value.__ob__ instanceof Observer) {
+      ob = value.__ob__;
+    } else {
+      ob = new Observer(value);
+    }
+    return ob
+  };
+
+  var observer = Observer;
+
+  var defineReactive_1 = defineReactive;
   var observe = observer.observe;
 
+  var defineComputed_1$1 = defineComputed_1;
+
   var watch = function (fn, cb, options) {
-    new watcher(fn, cb, options);
+    const watcher$$1 = new watcher(fn, cb, options);
+    return () => watcher$$1.teardown() // unwatch
   };
 
   var watchIt = {
+  	defineReactive: defineReactive_1,
   	observe: observe,
+  	defineComputed: defineComputed_1$1,
   	watch: watch
   };
 
   exports.default = watchIt;
+  exports.defineReactive = defineReactive_1;
   exports.observe = observe;
+  exports.defineComputed = defineComputed_1$1;
   exports.watch = watch;
 
   return exports;
